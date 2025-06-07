@@ -16,7 +16,7 @@
 
 body {
     font-family: 'Comic Neue', cursive;
-    background-color: var(--background);
+    background: linear-gradient(135deg, #6ecbf5 0%, #e3f2fd 100%);
     color: var(--text);
     padding: 20px;
     min-height: 100vh;
@@ -28,11 +28,24 @@ body {
 .quiz-container {
     background-color: var(--white);
     border-radius: 20px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     padding: 30px;
     width: 100%;
     max-width: 800px;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.quiz-container::before {
+    content: "";
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="%232196F3" opacity="0.1" d="M50,15A35,35 0 1,0 50,85A35,35 0 1,0 50,15Z"/></svg>') no-repeat;
+    z-index: 0;
 }
 
 header {
@@ -41,6 +54,7 @@ header {
     align-items: center;
     margin-bottom: 30px;
     position: relative;
+    z-index: 2;
 }
 
 header h1 {
@@ -49,11 +63,18 @@ header h1 {
     text-align: center;
     flex-grow: 1;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(45deg, #2196F3, #4CAF50);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
 }
 
 .progress-container {
     width: 100px;
     text-align: center;
+    background: rgba(33, 150, 243, 0.1);
+    padding: 8px;
+    border-radius: 20px;
 }
 
 .progress-bar {
@@ -62,15 +83,17 @@ header h1 {
     border-radius: 5px;
     margin-bottom: 5px;
     overflow: hidden;
+    position: relative;
 }
 
 .progress-bar::after {
     content: '';
     display: block;
     height: 100%;
-    width: 0%;
-    background-color: var(--primary);
-    transition: width 0.3s ease;
+    width: var(--progress, 0%);
+    background: linear-gradient(90deg, #2196F3, #4CAF50);
+    border-radius: 5px;
+    transition: width 0.5s ease;
 }
 
 .progress-text {
@@ -81,12 +104,18 @@ header h1 {
 
 .question-container {
     margin-bottom: 30px;
+    position: relative;
+    z-index: 2;
 }
 
 .question-text {
     font-size: 1.5rem;
     margin-bottom: 20px;
     color: var(--accent);
+    background: rgba(33, 150, 243, 0.05);
+    padding: 15px;
+    border-radius: 15px;
+    border-left: 5px solid var(--accent);
 }
 
 .options-container {
@@ -105,16 +134,19 @@ header h1 {
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
+    position: relative;
+    overflow: hidden;
 }
 
 .option:hover {
     transform: translateY(-3px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .option input {
     margin-right: 10px;
     transform: scale(1.3);
+    cursor: pointer;
 }
 
 .buttons-container {
@@ -123,7 +155,7 @@ header h1 {
 }
 
 .btn {
-    background-color: var(--accent);
+    background: linear-gradient(135deg, var(--accent), #1e88e5);
     color: white;
     border: none;
     border-radius: 50px;
@@ -133,54 +165,90 @@ header h1 {
     transition: all 0.3s ease;
     font-family: 'Comic Neue', cursive;
     font-weight: bold;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(33, 150, 243, 0.3);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: width 0.3s;
+    z-index: -1;
+}
+
+.btn:hover::before {
+    width: 100%;
 }
 
 .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 15px rgba(33, 150, 243, 0.4);
 }
 
 .btn:active {
-    transform: translateY(0);
+    transform: translateY(1px);
 }
 
 .btn:disabled {
-    background-color: #cccccc;
+    background: #cccccc;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
 }
 
 .submit-btn {
-    background-color: var(--primary);
+    background: linear-gradient(135deg, var(--primary), #43a047);
+    box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
 }
 
 .previous-btn {
-    background-color: var(--secondary);
-    color: var(--text);
+    background: linear-gradient(135deg, var(--secondary), #ffb300);
+    box-shadow: 0 4px 10px rgba(255, 193, 7, 0.3);
 }
 
 .result-container {
     text-align: center;
     padding: 20px;
+    position: relative;
+    z-index: 2;
 }
 
 .result-message {
-    font-size: 2rem;
+    font-size: 2.5rem;
     color: var(--primary);
     margin: 20px 0;
     font-weight: bold;
-    animation: bounce 0.5s ease infinite alternate;
+    animation: bounce 0.8s ease infinite alternate;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .score-container {
-    font-size: 1.2rem;
-    margin: 20px 0;
+    font-size: 1.4rem;
+    margin: 25px 0;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.score-box {
+    background: rgba(33, 150, 243, 0.1);
+    padding: 15px 30px;
+    border-radius: 15px;
+    min-width: 150px;
 }
 
 .score-container span {
     font-weight: bold;
+    display: block;
+    font-size: 2.5rem;
+    margin-top: 5px;
 }
 
 .correct-answers {
@@ -192,9 +260,11 @@ header h1 {
 }
 
 .restart-btn {
-    background-color: var(--secondary);
+    background: linear-gradient(135deg, var(--secondary), #ffb300);
     color: var(--text);
     margin-top: 20px;
+    font-size: 1.2rem;
+    padding: 15px 40px;
 }
 
 .hidden {
@@ -202,26 +272,115 @@ header h1 {
 }
 
 .correct {
-    background-color: rgba(76, 175, 80, 0.2);
+    background-color: rgba(76, 175, 80, 0.15);
     border-color: var(--primary);
 }
 
 .wrong {
-    background-color: rgba(244, 67, 54, 0.2);
+    background-color: rgba(244, 67, 54, 0.15);
     border-color: var(--error);
 }
 
 .locked {
     pointer-events: none;
-    opacity: 0.7;
+    opacity: 0.8;
+}
+
+.review-container {
+    margin-top: 30px;
+    text-align: left;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+    border: 2px dashed var(--accent);
+    border-radius: 15px;
+    background: rgba(33, 150, 243, 0.05);
+}
+
+.review-item {
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid var(--accent);
+}
+
+.review-question {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: var(--accent);
+}
+
+.review-answer {
+    display: flex;
+    margin-bottom: 5px;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.review-correct {
+    background: rgba(76, 175, 80, 0.1);
+    border-left: 3px solid var(--primary);
+}
+
+.review-wrong {
+    background: rgba(244, 67, 54, 0.1);
+    border-left: 3px solid var(--error);
+}
+
+.review-icon {
+    margin-right: 10px;
+    font-size: 1.2rem;
+    width: 25px;
+    text-align: center;
+}
+
+.review-status {
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.status-correct {
+    background: rgba(76, 175, 80, 0.2);
+    color: var(--primary);
+}
+
+.status-wrong {
+    background: rgba(244, 67, 54, 0.2);
+    color: var(--error);
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #f00;
+    border-radius: 50%;
+    animation: confetti-fall 5s linear infinite;
+    z-index: 1;
+}
+
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(-10px) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(500px) rotate(720deg);
+        opacity: 0;
+    }
 }
 
 @keyframes bounce {
     from {
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
     to {
-        transform: translateY(-10px);
+        transform: translateY(-15px) scale(1.05);
     }
 }
 
@@ -240,6 +399,7 @@ header h1 {
     
     header h1 {
         margin: 10px 0;
+        font-size: 2rem;
     }
     
     .buttons-container {
@@ -249,5 +409,18 @@ header h1 {
     
     .btn {
         width: 100%;
+    }
+    
+    .score-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .question-text {
+        font-size: 1.3rem;
+    }
+    
+    .result-message {
+        font-size: 2rem;
     }
 }
