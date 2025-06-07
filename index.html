@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIHAN's Fun Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="quiz-container">
+        <header>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+                <span class="progress-text">Question 1/5</span>
+            </div>
+            <h1>RIHAN</h1>
+        </header>
+
+        <main>
+            <div class="question-container">
+                <h2 class="question-text">Loading questions...</h2>
+                <div class="options-container">
+                    <!-- Options will be inserted here by JavaScript -->
+                </div>
+            </div>
+
+            <div class="buttons-container">
+                <button class="btn previous-btn" disabled>Previous</button>
+                <button class="btn submit-btn">Submit</button>
+                <button class="btn next-btn">Next</button>
+            </div>
+        </main>
+
+        <div class="result-container hidden">
+            <h2>Quiz Completed!</h2>
+            <div class="result-message"></div>
+            <div class="score-container">
+                <p>Correct Answers: <span class="correct-answers">0</span></p>
+                <p>Wrong Answers: <span class="wrong-answers">0</span></p>
+            </div>
+            <button class="btn restart-btn">Play Again</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

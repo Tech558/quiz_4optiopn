@@ -1,0 +1,253 @@
+:root {
+    --primary: #4CAF50;
+    --secondary: #FFC107;
+    --accent: #2196F3;
+    --error: #F44336;
+    --background: #E3F2FD;
+    --text: #333;
+    --white: #fff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Comic Neue', cursive;
+    background-color: var(--background);
+    color: var(--text);
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.quiz-container {
+    background-color: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 800px;
+    transition: all 0.3s ease;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+header h1 {
+    color: var(--accent);
+    font-size: 2.5rem;
+    text-align: center;
+    flex-grow: 1;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-container {
+    width: 100px;
+    text-align: center;
+}
+
+.progress-bar {
+    height: 10px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    overflow: hidden;
+}
+
+.progress-bar::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 0%;
+    background-color: var(--primary);
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: bold;
+}
+
+.question-container {
+    margin-bottom: 30px;
+}
+
+.question-text {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: var(--accent);
+}
+
+.options-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.option {
+    background-color: var(--white);
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.option:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.option input {
+    margin-right: 10px;
+    transform: scale(1.3);
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Comic Neue', cursive;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.submit-btn {
+    background-color: var(--primary);
+}
+
+.previous-btn {
+    background-color: var(--secondary);
+    color: var(--text);
+}
+
+.result-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.result-message {
+    font-size: 2rem;
+    color: var(--primary);
+    margin: 20px 0;
+    font-weight: bold;
+    animation: bounce 0.5s ease infinite alternate;
+}
+
+.score-container {
+    font-size: 1.2rem;
+    margin: 20px 0;
+}
+
+.score-container span {
+    font-weight: bold;
+}
+
+.correct-answers {
+    color: var(--primary);
+}
+
+.wrong-answers {
+    color: var(--error);
+}
+
+.restart-btn {
+    background-color: var(--secondary);
+    color: var(--text);
+    margin-top: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+.correct {
+    background-color: rgba(76, 175, 80, 0.2);
+    border-color: var(--primary);
+}
+
+.wrong {
+    background-color: rgba(244, 67, 54, 0.2);
+    border-color: var(--error);
+}
+
+.locked {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+@keyframes bounce {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(-10px);
+    }
+}
+
+@media (max-width: 600px) {
+    .options-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .quiz-container {
+        padding: 20px;
+    }
+    
+    header {
+        flex-direction: column;
+    }
+    
+    header h1 {
+        margin: 10px 0;
+    }
+    
+    .buttons-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+}

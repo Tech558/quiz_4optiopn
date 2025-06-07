@@ -1,0 +1,29 @@
+{
+  "questions": [
+    {
+      "question": "What is 2 + 2?",
+      "options": ["3", "4", "5", "6"],
+      "correctAnswer": 1
+    },
+    {
+      "question": "Which animal says 'Meow'?",
+      "options": ["Dog", "Cat", "Cow", "Lion"],
+      "correctAnswer": 1
+    },
+    {
+      "question": "What color is the sun?",
+      "options": ["Blue", "Green", "Yellow", "Red"],
+      "correctAnswer": 2
+    },
+    {
+      "question": "How many legs does a spider have?",
+      "options": ["4", "6", "8", "10"],
+      "correctAnswer": 2
+    },
+    {
+      "question": "Which of these is a fruit?",
+      "options": ["Carrot", "Broccoli", "Apple", "Potato"],
+      "correctAnswer": 2
+    }
+  ]
+}
