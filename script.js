@@ -5,15 +5,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitBtn = document.querySelector('.submit-btn');
     const nextBtn = document.querySelector('.next-btn');
     const previousBtn = document.querySelector('.previous-btn');
-    const progressBar = document.querySelector('.progress-bar::after');
     const progressText = document.querySelector('.progress-text');
+    const progressBar = document.querySelector('.progress-bar');
     const resultContainer = document.querySelector('.result-container');
     const quizContainer = document.querySelector('.question-container');
     const correctAnswersSpan = document.querySelector('.correct-answers');
     const wrongAnswersSpan = document.querySelector('.wrong-answers');
     const resultMessage = document.querySelector('.result-message');
     const restartBtn = document.querySelector('.restart-btn');
-    
+    const reviewContainer = document.querySelector('.review-container');
+
     // Quiz state
     let currentQuestion = 0;
     let score = 0;
@@ -21,19 +22,16 @@ document.addEventListener('DOMContentLoaded', function() {
     let quizData = [];
     let selectedOption = null;
     let answers = [];
-    
-    // Load quiz data from JSON
-    fetch('quizData.json')
+
+    // Fetch quiz data
+    fetch('data.json')
         .then(response => response.json())
         .then(data => {
             quizData = data.questions;
             initializeQuiz();
         })
-        .catch(error => {
-            console.error('Error loading quiz data:', error);
-            questionText.textContent = 'Failed to load questions. Please try again later.';
-        });
-    
+        .catch(error => console.error('Error loading quiz data:', error));
+
     function initializeQuiz() {
         showQuestion();
         updateProgress();
@@ -53,18 +51,51 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedOption = null;
         wrongAttempts = 0;
         
+        // Update next button text for last question
+        if (currentQuestion === quizData.length - 1) {
+            nextBtn.innerHTML = "See Results <i class='fas fa-trophy'></i>";
+        } else {
+            nextBtn.innerHTML = "Next <i class='fas fa-arrow-right'></i>";
+        }
+        
+        // Check if we have an answer for this question
+        const existingAnswer = answers[currentQuestion];
+        
         question.options.forEach((option, index) => {
             const optionElement = document.createElement('label');
             optionElement.className = 'option';
+            
+            if (existingAnswer) {
+                optionElement.classList.add('locked');
+            }
             
             const radioBtn = document.createElement('input');
             radioBtn.type = 'radio';
             radioBtn.name = 'option';
             radioBtn.value = index;
             
-            radioBtn.addEventListener('change', function() {
-                selectedOption = parseInt(this.value);
-            });
+            if (existingAnswer) {
+                radioBtn.disabled = true;
+                
+                // Show user's previous selection
+                if (existingAnswer.selectedOption === index) {
+                    radioBtn.checked = true;
+                }
+                
+                // Highlight correct answer
+                if (index === question.correctAnswer) {
+                    optionElement.classList.add('correct');
+                }
+                
+                // Highlight wrong user selection
+                if (existingAnswer.selectedOption === index && !existingAnswer.correct) {
+                    optionElement.classList.add('wrong');
+                }
+            } else {
+                radioBtn.addEventListener('change', function() {
+                    selectedOption = parseInt(this.value);
+                });
+            }
             
             const optionText = document.createElement('span');
             optionText.textContent = option;
@@ -76,8 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Enable/disable navigation buttons
         previousBtn.disabled = currentQuestion === 0;
-        nextBtn.disabled = currentQuestion === quizData.length - 1;
-        submitBtn.disabled = false;
+        submitBtn.disabled = existingAnswer ? true : false;
     }
     
     function checkAnswer() {
@@ -89,14 +119,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const question = quizData[currentQuestion];
         const options = document.querySelectorAll('.option');
         const selectedOptionElement = options[selectedOption];
+        const isCorrect = selectedOption === question.correctAnswer;
         
-        if (selectedOption === question.correctAnswer) {
+        answers[currentQuestion] = {
+            selectedOption: selectedOption,
+            correct: isCorrect,
+            attempts: wrongAttempts + 1
+        };
+        
+        if (isCorrect) {
             // Correct answer
             selectedOptionElement.classList.add('correct');
             score++;
-            answers[currentQuestion] = { correct: true, attempts: wrongAttempts + 1 };
-            disableOptions();
             submitBtn.disabled = true;
+            createConfetti();
         } else {
             // Wrong answer
             wrongAttempts++;
@@ -105,19 +141,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (wrongAttempts >= 2) {
                 // Show correct answer after 2 wrong attempts
                 options[question.correctAnswer].classList.add('correct');
-                answers[currentQuestion] = { correct: false, attempts: 2 };
-                disableOptions();
                 submitBtn.disabled = true;
             }
         }
-    }
-    
-    function disableOptions() {
-        const options = document.querySelectorAll('.option');
-        const radioButtons = document.querySelectorAll('input[type="radio"]');
-        
-        options.forEach(option => option.classList.add('locked'));
-        radioButtons.forEach(radio => radio.disabled = true);
     }
     
     function nextQuestion() {
@@ -140,17 +166,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function updateProgress() {
         const progressPercentage = ((currentQuestion + 1) / quizData.length) * 100;
-        document.querySelector('.progress-bar').style.setProperty('--progress', `${progressPercentage}%`);
+        progressBar.style.setProperty('--progress', `${progressPercentage}%`);
         progressText.textContent = `Question ${currentQuestion + 1}/${quizData.length}`;
-        
-        // Style the progress bar pseudo-element
-        const style = document.createElement('style');
-        style.innerHTML = `.progress-bar::after { width: ${progressPercentage}% !important; }`;
-        document.head.appendChild(style);
     }
     
     function showResults() {
-        const wrongAnswers = answers.filter(answer => !answer.correct).length;
+        const wrongAnswers = quizData.length - score;
         
         quizContainer.classList.add('hidden');
         resultContainer.classList.remove('hidden');
@@ -169,11 +190,61 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             resultMessage.textContent = 'Nice Try! You\'ll Do Better Next Time! 💪';
         }
+        
+        // Build review section
+        buildReviewSection();
+        
+        // Create celebration confetti
+        createConfetti();
+    }
+    
+    function buildReviewSection() {
+        reviewContainer.innerHTML = '';
+        
+        quizData.forEach((question, index) => {
+            const answer = answers[index] || {};
+            const reviewItem = document.createElement('div');
+            reviewItem.className = 'review-item';
+            
+            const questionEl = document.createElement('div');
+            questionEl.className = 'review-question';
+            questionEl.textContent = `${index + 1}. ${question.question}`;
+            reviewItem.appendChild(questionEl);
+            
+            // Show correct answer
+            const correctAnswerEl = document.createElement('div');
+            correctAnswerEl.className = 'review-answer review-correct';
+            correctAnswerEl.innerHTML = `
+                <div class="review-icon">✓</div>
+                <div>${question.options[question.correctAnswer]}</div>
+            `;
+            reviewItem.appendChild(correctAnswerEl);
+            
+            // Show user's answer if exists
+            if (answer.selectedOption !== undefined) {
+                const userAnswerEl = document.createElement('div');
+                userAnswerEl.className = `review-answer ${answer.correct ? 'review-correct' : 'review-wrong'}`;
+                userAnswerEl.innerHTML = `
+                    <div class="review-icon">${answer.correct ? '✓' : '✗'}</div>
+                    <div>Your answer: ${question.options[answer.selectedOption]}</div>
+                `;
+                reviewItem.appendChild(userAnswerEl);
+            }
+            
+            // Show status
+            const statusEl = document.createElement('div');
+            statusEl.className = `review-status ${answer.correct ? 'status-correct' : 'status-wrong'}`;
+            statusEl.textContent = answer.correct ? 'Correct!' : 'Wrong Answer';
+            reviewItem.appendChild(statusEl);
+            
+            reviewContainer.appendChild(reviewItem);
+        });
     }
     
     function restartQuiz() {
         currentQuestion = 0;
         score = 0;
+        wrongAttempts = 0;
         answers = [];
         
         quizContainer.classList.remove('hidden');
@@ -181,5 +252,30 @@ document.addEventListener('DOMContentLoaded', function() {
         
         showQuestion();
         updateProgress();
+        
+        // Remove any existing confetti
+        document.querySelectorAll('.confetti').forEach(el => el.remove());
+    }
+    
+    function createConfetti() {
+        const colors = ['#2196F3', '#4CAF50', '#FFC107', '#F44336', '#9C27B0'];
+        const container = document.querySelector('.quiz-container');
+        
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = `${Math.random() * 100}%`;
+            confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.width = `${Math.random() * 10 + 5}px`;
+            confetti.style.height = confetti.style.width;
+            confetti.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            confetti.style.animationDelay = `${Math.random() * 1}s`;
+            container.appendChild(confetti);
+            
+            // Remove confetti after animation
+            setTimeout(() => {
+                confetti.remove();
+            }, 5000);
+        }
     }
 });
